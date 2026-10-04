@@ -15,6 +15,19 @@ const (
 	cookieName            = "session"
 )
 
+// securityHeaders sets conservative security headers. The browser only applies
+// HSTS when the response arrives over HTTPS (terminated by the proxy).
+func securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h := w.Header()
+		h.Set("Strict-Transport-Security", "max-age=31536000")
+		h.Set("X-Content-Type-Options", "nosniff")
+		h.Set("X-Frame-Options", "SAMEORIGIN")
+		h.Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		next.ServeHTTP(w, r)
+	})
+}
+
 // optionalAuth attaches the authenticated user id to the request context when
 // a valid session cookie is present. Invalid or missing cookies are ignored so
 // guest mode keeps working.
