@@ -1,0 +1,61 @@
+# Docker Compose stack for the trainer app.
+#
+# Designed for Coolify ("Docker Compose" application). Coolify injects its own
+# proxy labels; set TRAINER_JWT_SECRET in the Coolify UI (Environment) so it is
+# never committed. Generate one with: openssl rand -hex 32
+
+services:
+  trainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: trainer:latest
+    container_name: trainer
+    restart: unless-stopped
+
+    # Coolify routes traffic through its proxy; publishing the port is handy for
+    # local `docker compose up` and harmless when the proxy is used.
+    ports:
+      - "8080:8080"
+
+    environment:
+      TRAINER_ADDR: ":8080"
+      TRAINER_DB: "/app/data/trainer.db"
+      TRAINER_STATIC: "/app/web/static"
+      TRAINER_TOKEN_TTL: "720h"
+      # Coolify terminates TLS, so the session cookie must be Secure.
+      TRAINER_COOKIE_SECURE: "true"
+      # Required: fails fast if the secret is missing.
+      TRAINER_JWT_SECRET: "${TRAINER_JWT_SECRET:?TRAINER_JWT_SECRET must be set}"
+
+    volumes:
+      # Persistent SQLite database. On Coolify, add /app/data under the app's
+      # "Persistent Storage" section, or switch to the named volume below.
+      - ./data:/app/data
+      # - trainer-data:/app/data
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 192M
+        reservations:
+          memory: 32M
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+# Uncomment to use a Docker-managed volume instead of the ./data bind mount
+# (recommended on Coolify, where relative bind mounts may not survive redeploys).
+# volumes:
+#   trainer-data:

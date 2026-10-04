@@ -1,0 +1,40 @@
+# Local SQLite database and WAL sidecar files
+/data/
+*.db
+*.db-shm
+*.db-wal
+
+# Built binaries
+/server
+/trainer
+/trainer-*
+
+# Node / Capacitor
+/node_modules/
+/dist/
+web/static/wasm/
+
+# Android build output & signing material
+*.jks
+*.keystore
+*.apk
+*.aab
+android/local.properties
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS / misc
+.DS_Store
+Thumbs.db
+*.out
+coverage.out

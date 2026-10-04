@@ -1,0 +1,19 @@
+{
+  "name": "trainer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline aptitude-test trainer — Capacitor Android wrapper",
+  "scripts": {
+    "wasm:build": "bash scripts/build-wasm.sh",
+    "cap:sync": "npm run wasm:build && cap sync android",
+    "android:debug": "npm run cap:sync && cd android && ./gradlew assembleDebug",
+    "android:release": "npm run cap:sync && cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/cli": "^7.0.0"
+  }
+}

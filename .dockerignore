@@ -1,0 +1,32 @@
+# Keep the build context small and reproducible.
+.git
+.gitignore
+.github
+.idea
+.vscode
+*.swp
+*.md
+.env
+data/
+*.db
+*.db-wal
+*.db-shm
+/server
+/trainer
+/trainer-*
+Dockerfile
+docker-compose*.yml
+
+# Android / Node build inputs (not needed for the Go image)
+node_modules/
+android/
+web/static/wasm/
+capacitor.config.json
+package.json
+package-lock.json
+scripts/
+*.jks
+*.keystore
+*.apk
+*.aab
+dist/

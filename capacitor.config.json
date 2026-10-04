@@ -1,0 +1,8 @@
+{
+  "appId": "de.trainer.app",
+  "appName": "Trainer",
+  "webDir": "web/static",
+  "server": {
+    "androidScheme": "https"
+  }
+}

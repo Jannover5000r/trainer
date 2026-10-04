@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Trainer — Eignungstest-Vorbereitung</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#dashboard">
+      <span class="brand-mark">T</span>
+      <span>Trainer</span>
+    </a>
+    <nav class="nav" id="nav">
+      <button data-view="dashboard" class="active" data-i18n="nav.dashboard">Dashboard</button>
+      <button data-view="math" data-i18n="nav.math">Kopfrechnen</button>
+      <button data-view="memory" data-i18n="nav.memory">Merkfähigkeit</button>
+      <button data-view="reaction" data-i18n="nav.reaction">Reaktion</button>
+      <button data-view="visual" data-i18n="nav.visual">Bildgedächtnis</button>
+    </nav>
+    <div class="header-right">
+      <span class="streak-chip" id="streak-chip">🔥 <b id="streak-value">0</b></span>
+      <button class="btn btn-ghost" id="lang-button" data-i18n-title="header.language">DE</button>
+      <button class="btn btn-ghost" id="auth-button" data-i18n="header.signIn">Anmelden</button>
+      <button class="btn btn-ghost menu-button" id="menu-button" data-i18n-title="menu.title" aria-label="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="view" id="view-dashboard"></section>
+    <section class="view hidden" id="view-math"></section>
+    <section class="view hidden" id="view-memory"></section>
+    <section class="view hidden" id="view-reaction"></section>
+    <section class="view hidden" id="view-visual"></section>
+  </main>
+
+  <dialog id="auth-dialog" class="dialog">
+    <form method="dialog" class="dialog-form" id="auth-form">
+      <h2 id="auth-title" data-i18n="auth.loginTitle">Anmelden</h2>
+      <div class="tabs" id="auth-tabs">
+        <button type="button" class="tab active" data-mode="login" data-i18n="auth.tabLogin">Login</button>
+        <button type="button" class="tab" data-mode="register" data-i18n="auth.tabRegister">Registrieren</button>
+      </div>
+      <label class="field">
+        <span data-i18n="auth.username">Benutzername</span>
+        <input id="auth-username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required />
+      </label>
+      <label class="field">
+        <span id="auth-password-label" data-i18n="auth.password">Passwort (min. 8 Zeichen)</span>
+        <input id="auth-password" type="password" autocomplete="current-password" minlength="8" required />
+      </label>
+      <label class="field hidden" id="auth-recovery-field">
+        <span data-i18n="auth.recoveryCodeInput">Wiederherstellungscode</span>
+        <input id="auth-recovery" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+      </label>
+      <p class="form-error" id="auth-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="auth-cancel" data-i18n="auth.cancel">Abbrechen</button>
+        <button type="submit" class="btn btn-primary" id="auth-submit" data-i18n="auth.submitLogin">Anmelden</button>
+      </div>
+      <button type="button" class="link-button" id="auth-recover-link" data-i18n="auth.recoverLink">Passwort vergessen?</button>
+    </form>
+
+    <div class="dialog-form hidden" id="auth-code-panel">
+      <h2 data-i18n="auth.recoveryNew">Dein Wiederherstellungscode:</h2>
+      <p class="muted small" data-i18n="auth.recoveryIntro">
+        Speichere diesen Wiederherstellungscode sicher. Er ist der einzige Weg, dein Passwort zurückzusetzen – er wird nur jetzt angezeigt.
+      </p>
+      <code class="recovery-code" id="auth-code-value"></code>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="auth-copy" data-i18n="auth.recoveryCopy">Kopieren</button>
+        <button type="button" class="btn btn-primary" id="auth-continue" data-i18n="auth.continue">Weiter</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="menu-dialog" class="dialog">
+    <div class="dialog-form">
+      <h2 data-i18n="menu.title">Einstellungen</h2>
+      <button type="button" class="btn btn-block" id="menu-language"></button>
+      <button type="button" class="btn btn-block" id="menu-auth"></button>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="menu-close" data-i18n="menu.close">Schließen</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
