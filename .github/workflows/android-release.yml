@@ -47,6 +47,10 @@ jobs:
           java-version: "21"
 
       - uses: android-actions/setup-android@v3
+        with:
+          # The action's default is "tools platform-tools"; the legacy "tools"
+          # package was removed from the SDK repo, so install what we need.
+          packages: "platform-tools platforms;android-35 build-tools;35.0.0"
 
       - uses: gradle/actions/setup-gradle@v4
 
