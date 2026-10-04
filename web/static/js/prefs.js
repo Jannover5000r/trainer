@@ -1,6 +1,4 @@
-// Account preferences. Local settings are always the source of truth for the
-// current device; when signed in they are also mirrored to the user's account
-// (difficulty choices, language, ...) so they follow the user across devices.
+// Account preferences: mirror local settings to the signed-in user's account.
 
 import { api } from "./api.js";
 import { store } from "./store.js";
@@ -13,8 +11,7 @@ export function initPrefs() {
   document.addEventListener("trainer:settings", schedule);
 }
 
-// loadAccountPrefs merges the account preferences into the local settings after
-// sign-in (account values win) and pushes the merged result back.
+// Merges account preferences into local settings after sign-in (account wins).
 export async function loadAccountPrefs() {
   if (!auth.isAuthenticated()) return;
 

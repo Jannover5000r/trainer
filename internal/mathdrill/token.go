@@ -15,10 +15,7 @@ import (
 	"time"
 )
 
-// ErrInvalidToken is returned when a task token is malformed or fails
-// authentication. Tokens are stateless: the correct answer travels inside the
-// encrypted payload so verification survives a server restart and stays hidden
-// from the client.
+// ErrInvalidToken is returned for a malformed or unauthentic task token.
 var ErrInvalidToken = errors.New("invalid task token")
 
 // issued is the encrypted payload embedded in every task token.

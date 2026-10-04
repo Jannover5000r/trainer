@@ -9,8 +9,7 @@ import (
 	"time"
 )
 
-// Config holds all runtime configuration. Every value can be overridden via
-// environment variables so the same binary works on a dev box and on a Pi.
+// Config holds the runtime configuration.
 type Config struct {
 	Addr         string
 	DBPath       string
@@ -32,8 +31,7 @@ func Load() Config {
 
 	secret := os.Getenv("TRAINER_JWT_SECRET")
 	if secret == "" {
-		// Ephemeral secret for local development only. Restarting invalidates
-		// sessions. Always set TRAINER_JWT_SECRET in production.
+		// Ephemeral development secret; sessions do not survive a restart.
 		buf := make([]byte, 32)
 		if _, err := rand.Read(buf); err != nil {
 			log.Fatalf("config: cannot generate jwt secret: %v", err)

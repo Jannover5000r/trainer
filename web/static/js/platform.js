@@ -1,8 +1,7 @@
-// Runtime platform detection. The web build talks to the Go HTTP API; the
-// Capacitor Android build runs entirely offline against the bundled WASM core.
+// Platform detection: HTTP API on the web, offline WASM core in the app.
 
 export function isNativeApp() {
-  // Capacitor Android also injects window.androidBridge.
+  // Capacitor Android injects window.androidBridge.
   if (globalThis.androidBridge) return true;
   try {
     const cap = globalThis.Capacitor;
@@ -13,7 +12,7 @@ export function isNativeApp() {
   }
 }
 
-// Allows forcing the offline core in a browser for testing with ?offline=1.
+// ?offline=1 forces the offline core in a desktop browser.
 export function isOfflineApp() {
   if (isNativeApp()) return true;
   try {

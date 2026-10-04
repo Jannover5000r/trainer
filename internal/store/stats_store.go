@@ -8,8 +8,7 @@ import (
 	"trainer/internal/models"
 )
 
-// StatsStore persists training results. user_id is nullable so anonymous
-// guest sessions can still be logged server-side.
+// StatsStore persists training results (user_id may be NULL for guests).
 type StatsStore struct {
 	db *sql.DB
 }

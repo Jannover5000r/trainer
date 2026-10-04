@@ -1,6 +1,5 @@
-// Offline API implementation. Boots the Go WASM core (built from cmd/wasm) and
-// exposes the same method surface as ./api.js, so the drill views are unchanged.
-// Account/sync/preferences are not available offline and degrade to guest mode.
+// Offline API backed by the Go WASM core (cmd/wasm). Mirrors ./api.js; account,
+// sync and preferences are unavailable offline.
 
 let readyPromise = null;
 
@@ -37,7 +36,7 @@ async function boot() {
   const response = await fetch("/wasm/trainer.wasm");
   const bytes = await response.arrayBuffer();
   const { instance } = await WebAssembly.instantiate(bytes, go.importObject);
-  // main() registers window.trainerOffline and then blocks; do not await this.
+  // main() blocks after registering trainerOffline; do not await.
   go.run(instance);
   await waitFor(() => globalThis.trainerOffline, 15000);
 }

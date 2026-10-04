@@ -5,10 +5,7 @@ import (
 	"fmt"
 )
 
-// schema is idempotent: it runs on every start and only creates what is
-// missing. For a project this size a versioned migration tool is overkill;
-// keep destructive changes out of here and add targeted migrations in
-// migrateUsers when a column changes.
+// schema creates any missing tables and indexes.
 const schema = `
 CREATE TABLE IF NOT EXISTS users (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,8 +54,7 @@ CREATE INDEX IF NOT EXISTS idx_stats_reaction_user    ON stats_reaction(user_id)
 CREATE INDEX IF NOT EXISTS idx_stats_reaction_created ON stats_reaction(created_at);
 `
 
-// Migrate creates the schema and applies small, non-destructive upgrades for
-// databases created by older versions.
+// Migrate creates the schema and applies the user-table upgrades.
 func Migrate(database *sql.DB) error {
 	if _, err := database.Exec(schema); err != nil {
 		return err
@@ -66,9 +62,8 @@ func Migrate(database *sql.DB) error {
 	return migrateUsers(database)
 }
 
-// migrateUsers upgrades the legacy email-based accounts table to username-based
-// accounts and adds the recovery-code column. Both steps are skipped on a fresh
-// database and are idempotent on repeated runs.
+// migrateUsers renames a legacy email column to username and adds the
+// recovery_hash/preferences columns. Idempotent.
 func migrateUsers(database *sql.DB) error {
 	cols, err := tableColumns(database, "users")
 	if err != nil {

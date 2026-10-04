@@ -263,6 +263,9 @@ cp .env.example .env      # set TRAINER_JWT_SECRET
 docker compose up --build
 ```
 
+For local access, uncomment the `ports: "8080:8080"` mapping in
+`docker-compose.yml` (it is omitted by default so Coolify's proxy owns routing).
+
 The multi-stage image builds a static binary with `CGO_ENABLED=0` and runs it in
 a slim `alpine` runtime image as an unprivileged user (`uid 10001`). The
 entrypoint makes `/app/data` writable and then drops privileges. The SQLite file

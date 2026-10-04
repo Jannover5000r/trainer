@@ -1,20 +1,16 @@
 # syntax=docker/dockerfile:1
 
-# ---- Stage 1: build ---------------------------------------------------------
-# The SQLite driver is modernc.org/sqlite (pure Go), so no CGO, gcc or musl-dev
-# are needed. This keeps the build simple and the resulting binary static.
+# Build stage: static binary (modernc.org/sqlite is pure Go, so CGO stays off).
 FROM golang:1.26-alpine AS builder
 
 WORKDIR /src
 
-# TARGETOS/TARGETARCH are populated automatically by BuildKit (arm64 on the Pi).
 ARG TARGETOS
 ARG TARGETARCH
 
 ENV CGO_ENABLED=0
 RUN apk add --no-cache ca-certificates
 
-# Cache dependencies separately from the source.
 COPY go.mod go.sum ./
 RUN go mod download
 
@@ -23,11 +19,9 @@ COPY . .
 RUN GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH:-arm64} \
     go build -trimpath -ldflags="-s -w" -o /out/trainer ./cmd/server
 
-# ---- Stage 2: runtime -------------------------------------------------------
+# Runtime stage: minimal image, runs as an unprivileged user.
 FROM alpine:3.20 AS runner
 
-# su-exec lets the entrypoint fix volume ownership as root and then drop to the
-# unprivileged app user.
 RUN apk add --no-cache ca-certificates su-exec tzdata \
     && addgroup -g 10001 -S app \
     && adduser -u 10001 -S -G app -h /app -s /sbin/nologin app

@@ -1,12 +1,7 @@
 //go:build js && wasm
 
-// Command wasm exposes the offline training core (math task generation +
-// verification and memory profile generation + evaluation) to JavaScript via
-// syscall/js. The Capacitor Android app loads trainer.wasm and calls these
-// functions so the drills work without the Go server.
-//
-// All functions take a single JSON string and return a JSON string, which keeps
-// the JS <-> Go boundary simple.
+// Command wasm exposes the offline training core to JavaScript via syscall/js.
+// Each function takes and returns a JSON string.
 package main
 
 import (
@@ -44,7 +39,7 @@ func main() {
 	}
 	js.Global().Set("trainerOffline", js.ValueOf(api))
 
-	// Keep the Go runtime (and the JS functions) alive for the app's lifetime.
+	// Keep the registered JS functions alive for the app's lifetime.
 	select {}
 }
 
