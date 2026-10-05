@@ -4,14 +4,35 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#071018" />
   <title>Trainer — Eignungstest-Vorbereitung</title>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong palette.
+    (function () {
+      var theme = "dark";
+      try {
+        var settings = JSON.parse(localStorage.getItem("trainer.settings.v1") || "{}");
+        var mode = ["light", "dark", "system"].indexOf(settings.theme) >= 0 ? settings.theme : "dark";
+        theme =
+          mode === "system"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : mode;
+      } catch (e) {
+        /* private mode / broken storage: fall back to dark */
+      }
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
 </head>
 <body>
   <header class="app-header">
     <a class="brand" href="#dashboard">
-      <span class="brand-mark">T</span>
+      <span class="brand-mark"><img src="/icon.svg" alt="" width="32" height="32" /></span>
       <span>Trainer</span>
     </a>
     <nav class="nav" id="nav">
@@ -23,6 +44,7 @@
     </nav>
     <div class="header-right">
       <span class="streak-chip" id="streak-chip">🔥 <b id="streak-value">0</b></span>
+      <button class="btn btn-ghost" id="theme-button" aria-label="Theme">◐</button>
       <button class="btn btn-ghost" id="lang-button" data-i18n-title="header.language">DE</button>
       <button class="btn btn-ghost" id="auth-button" data-i18n="header.signIn">Anmelden</button>
       <button class="btn btn-ghost menu-button" id="menu-button" data-i18n-title="menu.title" aria-label="Settings">⚙</button>
@@ -80,6 +102,14 @@
   <dialog id="menu-dialog" class="dialog">
     <div class="dialog-form">
       <h2 data-i18n="menu.title">Einstellungen</h2>
+      <div class="field">
+        <span data-i18n="theme.label">Design</span>
+        <div class="segmented" id="menu-theme">
+          <button type="button" data-theme-mode="light" data-i18n="theme.light">Hell</button>
+          <button type="button" data-theme-mode="dark" data-i18n="theme.dark">Dunkel</button>
+          <button type="button" data-theme-mode="system" data-i18n="theme.system">System</button>
+        </div>
+      </div>
       <button type="button" class="btn btn-block" id="menu-language"></button>
       <button type="button" class="btn btn-block" id="menu-auth"></button>
       <div class="dialog-actions">

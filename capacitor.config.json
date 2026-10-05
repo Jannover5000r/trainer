@@ -2,10 +2,17 @@
   "appId": "de.trainer.app",
   "appName": "Trainer",
   "webDir": "web/static",
+  "backgroundColor": "#071018",
   "server": {
     "androidScheme": "https"
   },
   "android": {
     "adjustMarginsForEdgeToEdge": "auto"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "backgroundColor": "#071018",
+      "launchAutoHide": true
+    }
   }
 }

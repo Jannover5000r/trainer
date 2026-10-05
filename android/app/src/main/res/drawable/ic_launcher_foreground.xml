@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Trainer "T" monogram: hex-chamfered crossbar + rounded stem.
+     Shared shape with web/static/icon.svg (108dp adaptive-icon canvas). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#04242C"
+        android:pathData="M35.78,33.75 L72.22,33.75 L78.98,40.16 L72.22,46.69 L35.78,46.69 L27.02,40.16 Z" />
+    <path
+        android:fillColor="#04242C"
+        android:pathData="M47.59,40.5 L60.41,40.5 L60.41,67.84 C60.41,71.38 57.54,74.25 54,74.25 C50.46,74.25 47.59,71.38 47.59,67.84 Z" />
+</vector>
