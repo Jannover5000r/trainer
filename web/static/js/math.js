@@ -358,12 +358,18 @@ async function finish(container, token) {
   document.dispatchEvent(new CustomEvent("trainer:updated"));
 
   const rows = results
-    .map(
-      (r) => `<div class="result-row ${r.correct ? "ok" : "no"}">
+    .map((r) => {
+      const mark = r.correct
+        ? `<span class="mark">✓</span>`
+        : `<span class="mark">
+             <span class="answer-given">${esc(r.given)}</span>
+             ${r.expected ? `<span class="answer-arrow">→</span><span class="answer-expected">${esc(r.expected)}</span>` : ""}
+           </span>`;
+      return `<div class="result-row ${r.correct ? "ok" : "no"}">
         <span>${esc(r.prompt)}</span>
-        <span class="mark">${r.correct ? "✓" : `✗ (${esc(r.expected || r.given)})`}</span>
-      </div>`,
-    )
+        ${mark}
+      </div>`;
+    })
     .join("");
 
   container.querySelector("#math-session").innerHTML = `
@@ -375,6 +381,7 @@ async function finish(container, token) {
         <div class="stat"><div class="value">${fmtDuration(durationMs / total)}</div><div class="label">${esc(t("label.perTask"))}</div></div>
       </div>
       ${!auth.isAuthenticated() ? `<p class="muted small">${esc(t("guest.note"))}</p>` : ""}
+      ${correct < total ? `<p class="muted small result-legend">${esc(t("math.resultLegend"))}</p>` : ""}
       <div class="result-list">${rows}</div>
       <div class="control-actions">
         <button class="btn btn-primary" id="math-again">${esc(t("action.newRound"))}</button>

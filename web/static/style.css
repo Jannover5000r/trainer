@@ -255,7 +255,18 @@ input:focus, select:focus, .btn:focus-visible {
 }
 .result-row.ok { background: var(--good-soft); }
 .result-row.no { background: var(--bad-soft); }
-.result-row .mark { font-weight: 700; }
+.result-row .mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: none;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.result-row .answer-given { color: var(--bad); text-decoration: line-through; text-decoration-thickness: 1px; }
+.result-row .answer-arrow { color: var(--muted); font-weight: 400; }
+.result-row .answer-expected { color: var(--good); }
+.result-legend { margin: 0.8rem 0 0; }
 
 /* ---- stats grid ---- */
 .stat-grid {
