@@ -7,8 +7,9 @@
 import { api } from "./api.js";
 import { auth } from "./auth.js";
 import { store } from "./store.js";
-import { $, esc, fmtDuration } from "./ui.js";
+import { $, esc, fmtDuration, onTap } from "./ui.js";
 import { t } from "./i18n.js";
+import { renderSymbols, teardownSymbols } from "./symbols.js";
 
 // `base` is the average number of colored tiles; the actual count jitters
 // around it so it is not a fixed number.
@@ -35,29 +36,56 @@ export function teardownVisual() {
   if (state?.timer) clearInterval(state.timer);
   if (state?.timeout) clearTimeout(state.timeout);
   state = null;
+  teardownSymbols();
 }
 
 export function renderVisual(container) {
   teardownVisual();
+  const mode = store.settings().visualMode === "symbols" ? "symbols" : "sequence";
+
+  container.innerHTML = `
+    <h1>${esc(t("visual.title"))}</h1>
+    <div class="card">
+      <div class="field"><span>${esc(t("visual.mode"))}</span>
+        <div class="segmented" id="visual-mode">
+          <button type="button" data-mode="sequence" class="${mode === "sequence" ? "active" : ""}">${esc(t("visual.mode.sequence"))}</button>
+          <button type="button" data-mode="symbols" class="${mode === "symbols" ? "active" : ""}">${esc(t("visual.mode.symbols"))}</button>
+        </div>
+      </div>
+    </div>
+    <div id="visual-body"></div>
+  `;
+  container.querySelectorAll("#visual-mode button").forEach((b) =>
+    b.addEventListener("click", () => {
+      if (b.dataset.mode === mode) return;
+      store.saveSettings({ visualMode: b.dataset.mode });
+      renderVisual(container);
+    }),
+  );
+
+  if (mode === "symbols") renderSymbols(container.querySelector("#visual-body"));
+  else renderSequence(container);
+}
+
+function renderSequence(container) {
   const s = store.settings();
   const difficulty = s.visualDifficulty || "easy";
   const rounds = ROUND_OPTIONS.includes(s.visualRounds) ? s.visualRounds : 10;
   const study = clampStudy(s.visualStudySec || 2);
 
-  container.innerHTML = `
-    <h1>${esc(t("visual.title"))}</h1>
+  container.querySelector("#visual-body").innerHTML = `
     <div class="card" id="visual-config">
       <p class="muted small">${esc(t("visual.intro"))}</p>
       <p class="muted small">${esc(t("visual.studyHint"))} ${esc(t("visual.failHint"))}</p>
       <div class="controls">
         <div class="field"><span>${esc(t("label.difficulty"))}</span>
           <div class="segmented" id="visual-difficulty">
-            ${DIFFICULTIES.map((d) => `<button data-diff="${d}" class="${d === difficulty ? "active" : ""}">${esc(t("diff." + d))}</button>`).join("")}
+            ${DIFFICULTIES.map((d) => `<button type="button" data-diff="${d}" class="${d === difficulty ? "active" : ""}">${esc(t("diff." + d))}</button>`).join("")}
           </div>
         </div>
         <div class="field"><span>${esc(t("visual.rounds"))}</span>
           <div class="segmented" id="visual-rounds">
-            ${ROUND_OPTIONS.map((n) => `<button data-rounds="${n}" class="${n === rounds ? "active" : ""}">${n}</button>`).join("")}
+            ${ROUND_OPTIONS.map((n) => `<button type="button" data-rounds="${n}" class="${n === rounds ? "active" : ""}">${n}</button>`).join("")}
           </div>
         </div>
       </div>
@@ -223,7 +251,7 @@ function switchToRecall(container) {
 function bindRecall(container) {
   container.querySelectorAll(".grid-cell").forEach((cell) => {
     cell.classList.add("clickable");
-    cell.addEventListener("click", () => pickCell(container, Number(cell.dataset.i)));
+    onTap(cell, () => pickCell(container, Number(cell.dataset.i)));
   });
 }
 

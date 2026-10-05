@@ -3,6 +3,18 @@
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
+// onTap fires on pointerdown/up instead of click so rapid taps register
+// reliably on mobile (no 300 ms click delay / double-tap-zoom swallowing).
+// "down" is best for reaction pads and keypads; "up" is safer for grid cells
+// because a gesture that turns into a scroll cancels the pointer instead.
+export function onTap(el, handler, phase = "up") {
+  if (!el) return;
+  el.addEventListener(phase === "down" ? "pointerdown" : "pointerup", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    handler(event);
+  });
+}
+
 /** Escape text inserted into an innerHTML template. */
 export function esc(value) {
   return String(value ?? "")

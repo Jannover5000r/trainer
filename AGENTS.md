@@ -58,8 +58,8 @@ CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o trainer-arm64 ./cmd/server
 - `web/static/` — vanilla HTML/CSS/JS, no build step and no CDN (must work
   offline). Entry is `index.html` -> `/js/app.js` (ES modules): `api.js`,
   `store.js`, `ui.js`, `i18n.js`, `prefs.js`, `theme.js`, `auth.js`,
-  `dashboard.js`, `math.js`, `memory.js`, `reaction.js`, `visual.js`. UI text
-  goes through
+  `dashboard.js`, `math.js`, `memory.js`, `reaction.js`, `visual.js`,
+  `symbols.js`. UI text goes through
   `i18n.js` (`t()` on render; `data-i18n` attributes via `applyStatic()`);
   DE/EN switch in the header. Local-first: guests accumulate results in
   `localStorage` (`trainer.backlog`) which `POST /api/sync` uploads and clears
@@ -78,7 +78,12 @@ CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o trainer-arm64 ./cmd/server
   server-verifiable); they report results through `POST /api/stats/reaction` and
   `POST /api/stats/memory` (`profile_type: "visual"`). Visual memory runs a
   sequence of 10/20/30 grids with a 0.1–5 s study-time slider and fail-fast
-  recall (a wrong pick ends the image; response times are averaged). The math
+  recall (a wrong pick ends the image; response times are averaged). The
+  `visual.js` view has a mode switch: "Bildfolge" (that sequence) and
+  "Symbolfeld" (`symbols.js`) — one field of colored symbols memorized for
+  15 s–5 min, then a bottom palette per symbol; tap all its cells, first mistake
+  ends the run. Both are client-side and log a `profile_type: "visual"` stat
+  (symbol runs also set `variant: "symbols"` in local history). The math
   view has an on-screen keypad (`inputmode="none"`); on screens ≤700px the
   inline language/account buttons are hidden behind the header gear menu
   (`#menu-dialog`).
@@ -128,6 +133,12 @@ CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o trainer-arm64 ./cmd/server
   `phase` flag + `stopCountdown()` (idempotent), and `math.js` tags each session
   with a `sessionToken` checked by the timer/`setTimeout`/`finish` callbacks.
   Keep these guards when editing the views.
+- Mobile tap targets use `onTap()` from `ui.js` (pointer events, not `click`)
+  so rapid taps register: `"down"` for reaction pad/keypad, `"up"` for grid
+  cells. Never rebuild a drill board with `innerHTML` on every pick (the symbol
+  field patches single cells in `updateRecallUI`) — that drops taps on Android.
+  Interactive tiles/buttons need `touch-action: manipulation` to avoid the
+  double-tap-zoom delay.
 
 ## Deployment
 

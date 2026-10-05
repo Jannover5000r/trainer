@@ -4,7 +4,7 @@
 import { api } from "./api.js";
 import { auth } from "./auth.js";
 import { store } from "./store.js";
-import { $, esc, fmtDuration } from "./ui.js";
+import { $, esc, fmtDuration, onTap } from "./ui.js";
 import { t } from "./i18n.js";
 
 const ROUND_OPTIONS = [3, 5, 10];
@@ -74,7 +74,7 @@ function startSession(container, rounds) {
 
   state = { token: myToken, rounds, completed: 0, results: [], awaiting: false, pending: false, signalAt: 0, timeout: null };
 
-  $("#reaction-pad").addEventListener("click", () => onPadClick(container));
+  onTap($("#reaction-pad"), () => onPadClick(container), "down");
   $("#reaction-cancel").addEventListener("click", () => cancelSession(container));
 
   updateProgress();

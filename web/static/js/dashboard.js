@@ -57,6 +57,7 @@ export function computeStats(history = store.history()) {
 
   return {
     streak,
+    sessionsToday: todays.length,
     totalTasks,
     accuracy: knowledgeTasks ? correctTasks / knowledgeTasks : null,
     avgMs,
@@ -121,7 +122,11 @@ export function renderDashboard(container) {
           } else if (e.kind === "memory") {
             const visual = e.profileType === "visual";
             kind = visual ? t("kind.visual") : t("kind.memory");
-            detail = visual ? t("visual.grid") : t("memory.profiles");
+            detail = visual
+              ? e.variant === "symbols"
+                ? t("visual.symbolField")
+                : t("visual.grid")
+              : t("memory.profiles");
             score = `${e.correct}/${e.total}`;
             accuracy = e.total ? fmtPct(e.correct / e.total) : "–";
           } else {
@@ -146,6 +151,7 @@ export function renderDashboard(container) {
     <div class="card">
       <div class="stat-grid">
         <div class="stat"><div class="value">🔥 ${stats.streak}</div><div class="label">${esc(t("dashboard.streak"))}</div></div>
+        <div class="stat"><div class="value">${stats.sessionsToday}</div><div class="label">${esc(t("dashboard.todaySessions"))}</div></div>
         <div class="stat"><div class="value">${stats.totalTasks}</div><div class="label">${esc(t("dashboard.todayTasks"))}</div></div>
         <div class="stat"><div class="value">${fmtDuration(stats.avgMs)}</div><div class="label">${esc(t("dashboard.avgReaction"))}</div></div>
         <div class="stat"><div class="value">${fmtPct(stats.accuracy)}</div><div class="label">${esc(t("dashboard.todayAccuracy"))}</div></div>

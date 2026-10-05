@@ -5,7 +5,7 @@
 import { api } from "./api.js";
 import { auth } from "./auth.js";
 import { store } from "./store.js";
-import { $, esc, fmtPct, fmtDuration, fmtClock } from "./ui.js";
+import { $, esc, fmtPct, fmtDuration, fmtClock, onTap } from "./ui.js";
 import { t } from "./i18n.js";
 
 const CATEGORIES = [
@@ -228,14 +228,18 @@ function buildKeypad(container, category) {
   const editable = () => state && !state.locked && !state.finished;
 
   pad.querySelectorAll(".key[data-key]").forEach((b) =>
-    b.addEventListener("click", () => {
+    onTap(b, () => {
       if (editable()) input().value += b.dataset.key;
-    }),
+    }, "down"),
   );
-  pad.querySelector("[data-back]")?.addEventListener("click", () => {
-    if (editable()) input().value = input().value.slice(0, -1);
-  });
-  $("#math-key-enter")?.addEventListener("click", () => submitAnswer(container));
+  onTap(
+    pad.querySelector("[data-back]"),
+    () => {
+      if (editable()) input().value = input().value.slice(0, -1);
+    },
+    "down",
+  );
+  onTap($("#math-key-enter"), () => submitAnswer(container), "down");
 }
 
 function showTask(container) {
