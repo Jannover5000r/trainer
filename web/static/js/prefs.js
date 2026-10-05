@@ -4,6 +4,7 @@ import { api } from "./api.js";
 import { store } from "./store.js";
 import { auth } from "./auth.js";
 import { getLang, setLang } from "./i18n.js";
+import { applyTheme } from "./theme.js";
 
 let timer = null;
 
@@ -23,10 +24,13 @@ export async function loadAccountPrefs() {
   }
 
   const merged = { ...store.settings(), ...serverPrefs };
+  // Never let a malformed value from an old client break the theme switcher.
+  if (!["light", "dark", "system"].includes(merged.theme)) delete merged.theme;
   store.saveSettings(merged);
   if (merged.lang && merged.lang !== getLang()) {
     setLang(merged.lang);
   }
+  applyTheme();
   flush(merged);
 }
 

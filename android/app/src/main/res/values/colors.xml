@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Green-blue brand colors, matching web/static/style.css -->
+    <color name="colorPrimary">#0F766E</color>
+    <color name="colorPrimaryDark">#071018</color>
+    <color name="colorAccent">#22D3EE</color>
+    <!-- Mid-tone of the icon gradient; used for the Android 12+ splash -->
+    <color name="splash_background">#0B989F</color>
+</resources>

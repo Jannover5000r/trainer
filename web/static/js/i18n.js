@@ -19,6 +19,11 @@ const DICT = {
     "menu.title": "Einstellungen",
     "menu.language": "Sprache",
     "menu.close": "Schließen",
+    "theme.label": "Design",
+    "theme.light": "Hell",
+    "theme.dark": "Dunkel",
+    "theme.system": "System",
+    "theme.cycle": "Design wechseln",
     "keypad.enter": "OK",
 
     "auth.loginTitle": "Anmelden",
@@ -182,6 +187,11 @@ const DICT = {
     "menu.title": "Settings",
     "menu.language": "Language",
     "menu.close": "Close",
+    "theme.label": "Theme",
+    "theme.light": "Light",
+    "theme.dark": "Dark",
+    "theme.system": "System",
+    "theme.cycle": "Switch theme",
     "keypad.enter": "OK",
 
     "auth.loginTitle": "Sign in",

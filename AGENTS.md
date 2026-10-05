@@ -57,8 +57,9 @@ CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o trainer-arm64 ./cmd/server
   guarantees a memory stat is logged at most once per session.
 - `web/static/` — vanilla HTML/CSS/JS, no build step and no CDN (must work
   offline). Entry is `index.html` -> `/js/app.js` (ES modules): `api.js`,
-  `store.js`, `ui.js`, `i18n.js`, `prefs.js`, `auth.js`, `dashboard.js`,
-  `math.js`, `memory.js`, `reaction.js`, `visual.js`. UI text goes through
+  `store.js`, `ui.js`, `i18n.js`, `prefs.js`, `theme.js`, `auth.js`,
+  `dashboard.js`, `math.js`, `memory.js`, `reaction.js`, `visual.js`. UI text
+  goes through
   `i18n.js` (`t()` on render; `data-i18n` attributes via `applyStatic()`);
   DE/EN switch in the header. Local-first: guests accumulate results in
   `localStorage` (`trainer.backlog`) which `POST /api/sync` uploads and clears
@@ -66,7 +67,13 @@ CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o trainer-arm64 ./cmd/server
   for signed-in users. `prefs.js` mirrors `trainer.settings` to the account via
   `GET/PUT /api/preferences` when signed in (guests stay local-only). Styling is
   a small hand-written `style.css` with CSS variables (deliberately not
-  Tailwind CDN: offline + Pi-friendly).
+  Tailwind CDN: offline + Pi-friendly). Theme is a green-blue futuristic look:
+  `theme.js` stores `theme: "light"|"dark"|"system"` in `trainer.settings`
+  (synced with the account), resolves `system` via `prefers-color-scheme`, and
+  sets `html[data-theme]`; `style.css` keeps two palettes under
+  `:root`/`html[data-theme="light"]`, and `index.html` applies the saved theme
+  inline before first paint (header `#theme-button` cycles, `#menu-dialog`
+  has the three-way `#menu-theme` control).
 - Reaction and visual-memory drills are **client-side** (timing/pattern are not
   server-verifiable); they report results through `POST /api/stats/reaction` and
   `POST /api/stats/memory` (`profile_type: "visual"`). Visual memory runs a

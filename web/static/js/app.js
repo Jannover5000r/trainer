@@ -10,6 +10,7 @@ import { renderVisual, teardownVisual } from "./visual.js";
 import { $, $$ } from "./ui.js";
 import { initI18n, toggleLang, getLang, t, applyStatic } from "./i18n.js";
 import { initPrefs, loadAccountPrefs } from "./prefs.js";
+import { initTheme, setTheme, cycleTheme, currentMode } from "./theme.js";
 import { isOfflineApp } from "./platform.js";
 
 const views = {
@@ -43,7 +44,18 @@ function updateChrome() {
   $("#lang-button").textContent = getLang().toUpperCase();
   const authButton = $("#auth-button");
   authButton.textContent = t(authButton.dataset.i18n || "header.signIn");
+  updateThemeUI();
   updateMenu();
+}
+
+function updateThemeUI() {
+  const mode = currentMode();
+  const icons = { light: "☀", dark: "☾", system: "◐" };
+  const themeButton = $("#theme-button");
+  themeButton.textContent = icons[mode];
+  themeButton.title = t(`theme.${mode}`);
+  themeButton.setAttribute("aria-label", t("theme.cycle"));
+  $$("#menu-theme button").forEach((b) => b.classList.toggle("active", b.dataset.themeMode === mode));
 }
 
 function updateMenu() {
@@ -66,6 +78,18 @@ $$("#nav button").forEach((b) => b.addEventListener("click", () => show(b.datase
 window.addEventListener("hashchange", () => show(location.hash.slice(1) || "dashboard"));
 
 $("#lang-button").addEventListener("click", () => toggleLang());
+
+$("#theme-button").addEventListener("click", () => {
+  cycleTheme();
+  updateThemeUI();
+});
+$$("#menu-theme button").forEach((b) =>
+  b.addEventListener("click", () => {
+    setTheme(b.dataset.themeMode);
+    updateThemeUI();
+  }),
+);
+document.addEventListener("theme:changed", updateThemeUI);
 
 $("#menu-button").addEventListener("click", () => {
   updateMenu();
@@ -101,6 +125,7 @@ document.addEventListener("i18n:changed", () => {
 });
 
 initI18n();
+initTheme();
 initPrefs();
 if (isOfflineApp()) {
   // The offline app is guest-only: no account, sync or server preferences.
